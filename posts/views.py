@@ -1,5 +1,5 @@
 from django import template
-from django.core.checks import messages
+from django.contrib import messages
 from django.db.models import query
 from django.db.models.fields import mixins
 from django.db.models.query_utils import select_related_descend
@@ -29,7 +29,7 @@ class UserPosts(generic.ListView):
 
     def get_queryset(self):
         try:
-            self.post.user = User.objects.prefetch_related('posts').get(username__iexact = self.kwargs.get('username'))
+            self.post_user = User.objects.prefetch_related('posts').get(username__iexact = self.kwargs.get('username'))
         except User.DoesNotExist:
             raise Http404
         else:
@@ -46,7 +46,7 @@ class PostDetail(SelectRelatedMixin,generic.DetailView):
     select_related = ('user','group')
 
     def get_queryset(self):
-        queryset = super().getqueryset()
+        queryset = super().get_queryset()
         return queryset.filter(user__username__iexact=self.kwargs.get('username'))
 
 
@@ -66,7 +66,7 @@ class DeletePost(LoginRequiredMixin,SelectRelatedMixin,generic.DeleteView):
     success_url = reverse_lazy('posts:all')
 
     def get_queryset(self):
-        queryset = super().getqueryset()
+        queryset = super().get_queryset()
         return queryset.filter(user__id=self.request.user.id)
 
     def delete(self,*args, **kwargs):

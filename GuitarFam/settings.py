@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'accounts',
     'bootstrap3',
+    #'django_misaka',
     'groups',
     'posts',
 ]

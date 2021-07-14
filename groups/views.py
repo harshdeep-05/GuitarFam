@@ -22,7 +22,7 @@ class SingleGroup(generic.DetailView):
 class ListGroups(generic.ListView):
     model=Group
 
-class LeaveGroup(LoginRequiredMixin,generic.RedirectView):
+class JoinGroup(LoginRequiredMixin,generic.RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         return reverse('groups:single',kwargs={'slug':self.kwargs.get('slug')})
 
@@ -38,18 +38,18 @@ class LeaveGroup(LoginRequiredMixin,generic.RedirectView):
         return super().get(request,*args,**kwargs)        
 
 
-class JoinGroup(LoginRequiredMixin,generic.RedirectView):
+class LeaveGroup(LoginRequiredMixin,generic.RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         return reverse('groups:single',kwargs={'slug':self.kwargs.get('slug')})
     def get(self,request, *args, **kwargs):
         try:
-            membership = models.GroupMember.objects.filter(
+            membership = GroupMember.objects.filter(
                 user=self.request.user,
                 group__slug = self.kwargs.get('slug')
 
             ).get()
 
-        except models.GroupMember.DoesNotExist:
+        except GroupMember.DoesNotExist:
             messages.warning(self.request,'sorry you are not in ths grp')
         else:
             membership.delete()
